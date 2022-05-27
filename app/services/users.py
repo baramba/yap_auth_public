@@ -28,7 +28,8 @@ class UsersService:
 
     def update(self, id, payload) -> Optional[bool]:
         try:
-            Users.query.filter_by(id=id).update(payload)
+            if not Users.query.filter_by(id=id).update(payload):
+                return False
             self.session.commit()
             return True
         except ValueError:

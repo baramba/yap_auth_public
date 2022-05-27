@@ -16,6 +16,7 @@ python-dotenv = "0.20.0"
 flask-restx = "0.5.1"
 flask-marshmallow = "0.14.0"
 marshmallow-sqlalchemy = "0.28.0"
+Flask-Migrate = "3.1.0"
 
 [tool.poetry.dev-dependencies]
 black = {version = "^22.3.0", allow-prereleases = true}

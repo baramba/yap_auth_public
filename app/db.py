@@ -6,10 +6,10 @@ db = SQLAlchemy()
 
 
 def init_db(app: Flask):
-    
+
     # Подготоваливаем контекст и создаём таблицы
-    app.app_context().push()
+    # app.app_context().push()
 
     db.init_app(app)
-    migrate = Migrate(app, db)
-    db.create_all()
+    Migrate(app, db)
+    # db.create_all()

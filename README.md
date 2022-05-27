@@ -1,4 +1,4 @@
-[Запуск auth server](auth.md){target="_blank"}
+[Запуск auth server](auth.md)
 
 
 # Проектная работа 6 спринта

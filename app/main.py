@@ -1,19 +1,20 @@
 from flask import Flask
 
-from app.api.v1.ns import blueprint as apiv1
-from app.api.v2.users import users as usersv2
+from app.api.v1.ns import blueprint as api_v1
+# from app.api.v2.users import blueprint as api_v2
 from app.db import init_db
 
 app = Flask(__name__)
+app.config["RESTX_MASK_SWAGGER"] = False
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 
+app.register_blueprint(api_v1)
+# app.register_blueprint(api_v2)
 
-# app.register_blueprint(usersv1, url_prefix="/api/v1")
-app.register_blueprint(usersv2, url_prefix="/api/v2")
-app.register_blueprint(apiv1)
+init_db(app)
 
 
 def main():
-    init_db(app)
     app.run()
 
 

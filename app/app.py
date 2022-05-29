@@ -6,6 +6,7 @@ from app.db import init_db
 
 def create_app():
     app = Flask(__name__)
+
     app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://user:pass@localhost/postgres"
     app.config["RESTX_MASK_SWAGGER"] = False
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True

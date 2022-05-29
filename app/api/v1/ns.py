@@ -1,9 +1,11 @@
 from flask import Blueprint
 from flask_restx import Api
 
+from .permissions import ns as permissions
+from .roles import ns as roles
 from .users import ns as users
 
-blueprint = Blueprint("user_v1", __name__, url_prefix="/api/v1")
+blueprint = Blueprint("Auth_v1", __name__, url_prefix="/api/v1")
 
 api = Api(
     blueprint,
@@ -15,3 +17,5 @@ api = Api(
 )
 
 api.add_namespace(users)
+api.add_namespace(roles)
+api.add_namespace(permissions)

@@ -3,6 +3,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+migrate = Migrate()
 
 
 def init_db(app: Flask):
@@ -11,5 +12,5 @@ def init_db(app: Flask):
     # app.app_context().push()
 
     db.init_app(app)
-    Migrate(app, db)
+    migrate.init_app(app, db)
     # db.create_all()

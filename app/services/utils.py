@@ -1,3 +1,10 @@
+from app import bcrypt
+
+
+def get_password_hash(password):
+    return bcrypt.generate_password_hash(password).decode("utf-8")
+
+
 def message(status, message):
     response_object = {"status": status, "message": message}
     return response_object

@@ -8,26 +8,30 @@ from flask_jwt_extended import (
 from flask_sqlalchemy import SQLAlchemy
 from loguru import logger
 
+from app import jwt
 from app.db import db
+from app.models.history import UsersHistory
+from app.models.schemas import UserHistory as UserHistorySchema
 from app.models.users import Users
-from app.services.utils import err_resp, internal_err_resp, message
+from app.services.base import BaseStorage
+from app.services.redis import get_redis_storage
+from app.services.utils import err_resp, get_password_hash, internal_err_resp, message
+
+
+@jwt.token_in_blocklist_loader
+def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
+    jti = jwt_payload['jti']
+    token_in_storage = get_redis_storage().get_from_storage(jti)
+    return token_in_storage is not None
 
 
 class UsersService:
-    def __init__(self, db: SQLAlchemy) -> None:
+    def __init__(self, db: SQLAlchemy, storage: BaseStorage) -> None:
         self.db = db
         self.session = db.session
+        self.storage = storage
 
-    def get(self, id: int) -> Optional[Users]:
-        return Users.query.get_or_404(id)
-
-    def delete(self, id: int) -> Optional[bool]:
-        user = Users.query.get_or_404(id)
-        self.session.delete(user)
-        self.session.commit()
-        return True
-
-    def register(self, payload):
+    def register(self, payload, agent):
         email = payload['email']
 
         # Check if the email is taken
@@ -37,10 +41,11 @@ class UsersService:
         # Validation
         try:
             user = Users(**payload)
-
             self.session.add(user)
+            self.session.commit()
 
-            # Commit changes to DB
+            history_item = UsersHistory(user_id=user.id, user_agent=agent)
+            self.session.add(history_item)
             self.session.commit()
 
             access_token = create_access_token(identity=user.id)
@@ -51,14 +56,12 @@ class UsersService:
             resp["refresh_token"] = refresh_token
             resp["user"] = user.id
 
-            print(resp)
-
             return resp, 201
         except Exception as e:
             logger.error(e)
             return internal_err_resp()
 
-    def login(self, payload):
+    def login(self, payload, agent):
         email = payload['email']
         password = payload['password']
 
@@ -72,6 +75,10 @@ class UsersService:
                 )
 
             elif user and user.verify_password(password):
+                history_item = UsersHistory(user_id=user.id, user_agent=agent)
+                self.session.add(history_item)
+                self.session.commit()
+
                 access_token = create_access_token(identity=user.id)
                 refresh_token = create_refresh_token(identity=user.id)
 
@@ -92,6 +99,7 @@ class UsersService:
 
     def refresh(self):
         identity = get_jwt_identity()
+
         access_token = create_access_token(identity=identity)
         refresh_token = create_refresh_token(identity=identity)
 
@@ -102,15 +110,44 @@ class UsersService:
 
         return resp, 200
 
-    def update(self, id, payload) -> Optional[bool]:
+    def logout(self, jti, ttype):
+        self.storage.put_to_storage(jti, '', 10*60)
+        resp = message(True, f"{ttype.capitalize()} token successfully revoked.")
+        return resp, 200
+
+    def update(self, payload) -> Optional[bool]:
+        identity = get_jwt_identity()
+        if 'password' in payload.keys():
+            payload['password_hash'] = get_password_hash(payload['password'])
+            del payload['password']
         try:
-            if not Users.query.filter_by(id=id).update(payload):
-                return False
+            Users.query.filter_by(id=identity).update(payload)
             self.session.commit()
-            return True
-        except ValueError:
-            return False
+            resp = message(True, "Successfully updated user info.")
+            resp["user"] = identity
+
+            return resp, 200
+
+        except ValueError as e:
+            logger.error(e)
+            return internal_err_resp()
+
+    def get_history(self):
+        identity = get_jwt_identity()
+        try:
+            history_data = UsersHistory.query.filter_by(user_id=identity).all()
+            result = []
+            for item in history_data:
+                histoty_schema = UserHistorySchema()
+                result.append(histoty_schema.dump(item))
+            resp = message(True, "Successfully get user auth history.")
+            resp['history'] = result
+            return resp, 200
+
+        except Exception as e:
+            logger.error(e)
+            return internal_err_resp()
 
 
 def get_users_service() -> UsersService:
-    return UsersService(db)
+    return UsersService(db, get_redis_storage())

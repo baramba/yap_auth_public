@@ -21,3 +21,13 @@ class AuthDto:
             "password": fields.String(required=True, description="User password"),
         },
     )
+
+    auth_change = api.model(
+        "User data",
+        {
+            "first_name": fields.String(description="User first name"),  # Optional
+            "last_name": fields.String(description="User password"),  # Optional
+            "email": fields.String(description="User email"),  # Optional
+            "password": fields.String(description="User password"),  # Optional
+        },
+    )

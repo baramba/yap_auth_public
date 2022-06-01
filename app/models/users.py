@@ -2,6 +2,7 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, SQLAlchemySchema, auto_
 
 from app import bcrypt
 from app.db import db
+from app.services.utils import get_password_hash
 
 from .base import BaseSchema
 
@@ -21,7 +22,7 @@ class Users(db.Model):
 
     @password.setter
     def password(self, password):
-        self.password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
+        self.password_hash = get_password_hash(password)
 
     def verify_password(self, password):
         return bcrypt.check_password_hash(self.password_hash, password)

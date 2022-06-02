@@ -1,4 +1,4 @@
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, SQLAlchemySchema
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from app.db import db
 

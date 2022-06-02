@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from loguru import logger
 
 from app import jwt
+from app.config.settings import Config
 from app.db import db
 from app.models.history import UsersHistory
 from app.models.schemas import UserHistory as UserHistorySchema
@@ -111,7 +112,7 @@ class UsersService:
         return resp, 200
 
     def logout(self, jti, ttype):
-        self.storage.put_to_storage(jti, '', 10*60)
+        self.storage.put_to_storage(jti, '', Config.JWT_ACCESS_TOKEN_EXPIRES)
         resp = message(True, f"{ttype.capitalize()} token successfully revoked.")
         return resp, 200
 

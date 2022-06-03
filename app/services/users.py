@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 from typing import Optional
 
@@ -9,13 +8,16 @@ from flask_jwt_extended import (
 )
 from flask_sqlalchemy import SQLAlchemy
 from loguru import logger
+from sqlalchemy.exc import IntegrityError
 
 from app import jwt
 from app.config.settings import Config
 from app.db import db
 from app.models.history import UsersHistory
+from app.models.roles import Roles
 from app.models.schemas import UserHistory as UserHistorySchema
 from app.models.users import Users
+from app.models.users_roles import UserRoles
 from app.services.base import BaseStorage
 from app.services.redis import get_redis_storage
 from app.services.utils import err_resp, get_password_hash, internal_err_resp, message
@@ -167,7 +169,7 @@ class UsersService:
             db.session.bulk_save_objects(user_roles)
             db.session.commit()
         except IntegrityError as e:
-            log.error(e)
+            logger.error(e)
             return False
         return True
 

@@ -125,6 +125,11 @@ class UsersService:
         if 'password' in payload.keys():
             payload['password_hash'] = get_password_hash(payload['password'])
             del payload['password']
+        if 'email' in payload.keys():
+            # if Users.query.filter_by(email=payload['email']).first() is not None:
+            if Users.query.filter((Users.email == payload['email']) & (Users.id != identity)).first() is not None:
+                return err_resp("Email is already being used.", "email_taken", 403)
+
         try:
             Users.query.filter_by(id=identity).update(payload)
             self.session.commit()

@@ -19,3 +19,5 @@ api = Api(
 api.add_namespace(users)
 api.add_namespace(roles)
 api.add_namespace(permissions)
+
+

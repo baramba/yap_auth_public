@@ -20,3 +20,5 @@ class UserSchema(BaseSchema):
     class Meta(BaseSchema.Meta):
         model = Users
         load_instance = True
+        # fields = ("email",)
+        # exclude = ("password",)

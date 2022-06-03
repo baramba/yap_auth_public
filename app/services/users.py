@@ -31,7 +31,7 @@ class UsersService:
         user = Users(**payload)
         self.session.add(user)
         self.session.commit()
-        return user.id
+        return user
 
     def update(self, id, payload) -> Optional[bool]:
         try:

@@ -11,7 +11,7 @@ from loguru import logger
 from sqlalchemy.exc import IntegrityError
 
 from app import jwt
-from app.config.settings import Config
+from app.config.settings import settings
 from app.db import db
 from app.models.history import UsersHistory
 from app.models.roles import Roles
@@ -116,7 +116,7 @@ class UsersService:
         return resp, 200
 
     def logout(self, jti, ttype):
-        self.storage.put_to_storage(jti, '', Config.JWT_ACCESS_TOKEN_EXPIRES)
+        self.storage.put_to_storage(jti, '', settings.JWT_ACCESS_TOKEN_EXPIRES)
         resp = message(True, f"{ttype.capitalize()} token successfully revoked.")
         return resp, 200
 

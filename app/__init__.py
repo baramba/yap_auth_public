@@ -5,7 +5,9 @@ from flask_jwt_extended import JWTManager
 from flask_marshmallow import Marshmallow
 from redis import Redis
 
+from app.config import settings
+
 bcrypt = Bcrypt()
 jwt = JWTManager()
 ma = Marshmallow()
-redis = Redis(host='localhost', port=6379, db=0)
+redis = Redis.from_url(settings.settings.redis_dsn)

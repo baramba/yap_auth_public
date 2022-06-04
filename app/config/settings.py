@@ -2,22 +2,23 @@ import os
 from datetime import timedelta
 
 from dotenv import load_dotenv
+from pydantic import AnyUrl, BaseSettings, DirectoryPath, Field, RedisDsn
 
 load_dotenv()
 
 
-class Config:
-    POSTGRES_DB = os.environ.get("POSTGRES_DB")
-    POSTGRES_USER = os.environ.get("POSTGRES_USER")
-    POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
-    POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "localhost")
+class Settings(BaseSettings):
 
-    SQLALCHEMY_DATABASE_URI = "postgresql://" + POSTGRES_USER + ":" + \
-        POSTGRES_PASSWORD + "@" + POSTGRES_HOST + "/" + POSTGRES_DB
+    SQLALCHEMY_DATABASE_URI: AnyUrl = Field(
+        default="postgresql://user:pass@localhost/postgres", env="SQLALCHEMY_DB_URI")
+    RESTX_MASK_SWAGGER: bool = Field(default=False, env="RESTX_MASK_SWAGGER")
+    SQLALCHEMY_TRACK_MODIFICATIONS: bool = Field(default=True, env="SQLALCHEMY_TRACK_MODIFICATIONS")
 
-    RESTX_MASK_SWAGGER = False
-    SQLALCHEMY_TRACK_MODIFICATIONS = True
-    SECRET_KEY = os.environ.get("SECRET_KEY", os.urandom(24))
-    JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", os.urandom(24))
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)
-    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
+    JWT_SECRET_KEY: bytes = Field(default=os.urandom(24), env="JWT_SECRET_KEY")
+    JWT_ACCESS_TOKEN_EXPIRES = Field(default=timedelta(minutes=15), env="JWT_ACCESS_TOKEN_EXPIRES")
+    JWT_REFRESH_TOKEN_EXPIRES = Field(default=timedelta(days=30), env="JWT_REFRESH_TOKEN_EXPIRES")
+
+    redis_dsn: RedisDsn = Field(default="redis://@localhost:6379/0", env="REDIS_URL")
+
+
+settings = Settings()

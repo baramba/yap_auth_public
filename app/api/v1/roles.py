@@ -43,7 +43,7 @@ class RolesAPI(Resource):
     def delete(self, id: int):
         result = api_service.delete(id=id)
         if result:
-            return "Role id={0} deleted".format(id), 200
+            return "Role id={0} deleted".format(id), 204
         return abort(404)
 
     def put(self, id):
@@ -53,7 +53,7 @@ class RolesAPI(Resource):
             return err.messages, 400
         if not api_service.update(id, request.json):
             return abort(404)
-        return "Updated role's id={0}.".format(id)
+        return "Updated role's id={0}.".format(id), 204
 
 
 @ns.route("/")
@@ -67,7 +67,7 @@ class RoleAPI1(Resource):
             role_id = api_service.create(request.json)
         except ValidationError as err:
             return err.messages, 400
-        return "Created role's id={0}.".format(role_id)
+        return "Created role's id={0}.".format(role_id), 201
 
 
 @ns.route("/<int:id>/permissions")

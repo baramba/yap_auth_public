@@ -1,6 +1,8 @@
 import logging
+from typing import Optional
 
 from flask import abort, request
+from flask.wrappers import Response
 from flask_restx import Namespace, Resource, fields
 from marshmallow import ValidationError
 
@@ -12,6 +14,7 @@ ns = Namespace("users", "user API")
 ns.logger.setLevel(logging.DEBUG)
 
 user_schema = UserSchema()
+user_schema_resp = UserSchema(exclude=["password_hash"])
 users_schema = UserSchema(many=True)
 role_schema = RoleSchema()
 roles_schema = RoleSchema(many=True)
@@ -25,6 +28,16 @@ user_response = ns.model(
         "first_name": fields.String(required=True, description="User first name"),
         "last_name": fields.String(required=True, description="User password"),
         "email": fields.String(required=True, description="User email"),
+    },
+)
+
+user_request = ns.model(
+    "User",
+    {
+        "first_name": fields.String(required=True, description="User first name"),
+        "last_name": fields.String(required=True, description="User last name"),
+        "email": fields.String(required=True, description="User email"),
+        "password": fields.String(required=True, description="User password"),
     },
 )
 
@@ -44,19 +57,26 @@ user_roles_req = ns.model(
 )
 
 
+def ok20x(response: Optional[str] = None, http_code: int = 200, mimetype="application/json"):
+    return Response(response, status=http_code, mimetype=mimetype)
+
+
 @ns.route("/<int:id>")
 class UsersAPI(Resource):
     @ns.marshal_with(user_response)
-    def get(self, id: int):
+    def get(
+        self,
+        id: int,
+    ):
         user = api_service.get(id)
         if not user:
             abort(404)
-        return user_schema.dump(user)
+        return user_schema_resp.dump(user)
 
     def delete(self, id: int):
         result = api_service.delete(id=id)
         if result:
-            return "User id={0} deleted".format(id), 200
+            return ok20x(http_code=204)
         return abort(404)
 
     def put(self, id):
@@ -66,19 +86,19 @@ class UsersAPI(Resource):
             return err.messages, 400
         if not api_service.update(id, request.json):
             return abort(404)
-        return "Updated user's id={0}.".format(id)
+        return ok20x(http_code=204)
 
 
 @ns.route("/")
 class UsersAPIOther(Resource):
-    @ns.expect(user_response)
+    @ns.expect(user_request)
     def post(self):
         try:
             user_schema.load(request.json)
-            user_id = api_service.create(request.json)
+            user = api_service.create(request.json)
         except ValidationError as err:
             return err.messages, 400
-        return "Add user's id={0}.".format(user_id)
+        return user_schema_resp.dump(user)
 
 
 @ns.route("/<int:id>/roles/")
@@ -94,12 +114,12 @@ class UsersRolesAPI(Resource):
     def delete(self, id: int):
         result = api_service.delete_roles(id=id, roles_id=dict(request.json)["ids"])
         if result:
-            return "User.id={0}, deleted {1} roles".format(id, result), 200
+            return ok20x(http_code=204)
         return abort(404)
 
     @ns.expect(user_roles_req)
     def post(self, id: int):
         result = api_service.add_roles(id=id, roles_id=dict(request.json)["ids"])
         if result:
-            return "User.id={0}, add {1} roles".format(id, result), 200
+            return ok20x(http_code=201)
         return abort(404)

@@ -1,0 +1,8 @@
+__pycache__
+.pytest_cache
+.dockerignore
+.env
+.env.example
+docker-compose.yaml
+Dockerfile
+# /poetry.lock

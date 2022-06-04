@@ -84,7 +84,7 @@ class UsersAPI(Resource):
             user_schema.load(request.json)
         except ValidationError as err:
             return err.messages, 400
-        if not api_service.update(id, request.json):
+        if not api_service.update_user(id, request.json):
             return abort(404)
         return ok20x(http_code=204)
 

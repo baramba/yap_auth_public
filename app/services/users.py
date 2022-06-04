@@ -28,7 +28,7 @@ log = logging.getLogger("{0}[{1}]".format(Path(__file__).parent.name, Path(__fil
 
 @jwt.token_in_blocklist_loader
 def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
-    jti = jwt_payload['jti']
+    jti = jwt_payload["jti"]
     token_in_storage = get_redis_storage().get_from_storage(jti)
     return token_in_storage is not None
 
@@ -40,7 +40,7 @@ class UsersService:
         self.storage = storage
 
     def register(self, payload, agent):
-        email = payload['email']
+        email = payload["email"]
 
         # Check if the email is taken
         if Users.query.filter_by(email=email).first() is not None:
@@ -70,8 +70,8 @@ class UsersService:
             return internal_err_resp()
 
     def login(self, payload, agent):
-        email = payload['email']
-        password = payload['password']
+        email = payload["email"]
+        password = payload["password"]
 
         try:
             # Fetch user data
@@ -97,9 +97,7 @@ class UsersService:
 
                 return resp, 200
 
-            return err_resp(
-                "Failed to log in, password may be incorrect.", "password_invalid", 401
-            )
+            return err_resp("Failed to log in, password may be incorrect.", "password_invalid", 401)
 
         except Exception as e:
             logger.error(e)
@@ -119,18 +117,18 @@ class UsersService:
         return resp, 200
 
     def logout(self, jti, ttype):
-        self.storage.put_to_storage(jti, '', settings.JWT_ACCESS_TOKEN_EXPIRES)
+        self.storage.put_to_storage(jti, "", settings.JWT_ACCESS_TOKEN_EXPIRES)
         resp = message(True, f"{ttype.capitalize()} token successfully revoked.")
         return resp, 200
 
     def update(self, payload) -> Optional[bool]:
         identity = get_jwt_identity()
-        if 'password' in payload.keys():
-            payload['password_hash'] = get_password_hash(payload['password'])
-            del payload['password']
-        if 'email' in payload.keys():
+        if "password" in payload.keys():
+            payload["password_hash"] = get_password_hash(payload["password"])
+            del payload["password"]
+        if "email" in payload.keys():
             # if Users.query.filter_by(email=payload['email']).first() is not None:
-            if Users.query.filter((Users.email == payload['email']) & (Users.id != identity)).first() is not None:
+            if Users.query.filter((Users.email == payload["email"]) & (Users.id != identity)).first() is not None:
                 return err_resp("Email is already being used.", "email_taken", 403)
 
         try:
@@ -154,7 +152,7 @@ class UsersService:
                 histoty_schema = UserHistorySchema()
                 result.append(histoty_schema.dump(item))
             resp = message(True, "Successfully get user auth history.")
-            resp['history'] = result
+            resp["history"] = result
             return resp, 200
 
         except Exception as e:
@@ -176,7 +174,7 @@ class UsersService:
         self.session.commit()
         return user
 
-    def update(self, id, payload) -> Optional[bool]:
+    def update_user(self, id, payload) -> Optional[bool]:
         try:
             if not Users.query.filter_by(id=id).update(payload):
                 return False

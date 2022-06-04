@@ -1,6 +1,8 @@
 from flask import Blueprint
 from flask_restx import Api
 
+from app.auth.controller import api as auth
+
 from .permissions import ns as permissions
 from .roles import ns as roles
 from .users import ns as users
@@ -19,5 +21,4 @@ api = Api(
 api.add_namespace(users)
 api.add_namespace(roles)
 api.add_namespace(permissions)
-
-
+api.add_namespace(auth)

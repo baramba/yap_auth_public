@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Optional
 
@@ -21,6 +22,8 @@ from app.models.users_roles import UserRoles
 from app.services.base import BaseStorage
 from app.services.redis import get_redis_storage
 from app.services.utils import err_resp, get_password_hash, internal_err_resp, message
+
+log = logging.getLogger("{0}[{1}]".format(Path(__file__).parent.name, Path(__file__).name))
 
 
 @jwt.token_in_blocklist_loader
@@ -157,6 +160,30 @@ class UsersService:
         except Exception as e:
             logger.error(e)
             return internal_err_resp()
+
+    def get(self, id: int) -> Optional[Users]:
+        return Users.query.get_or_404(id)
+
+    def delete(self, id: int) -> Optional[bool]:
+        user = Users.query.get_or_404(id)
+        self.session.delete(user)
+        self.session.commit()
+        return True
+
+    def create(self, payload) -> int:
+        user = Users(**payload)
+        self.session.add(user)
+        self.session.commit()
+        return user
+
+    def update(self, id, payload) -> Optional[bool]:
+        try:
+            if not Users.query.filter_by(id=id).update(payload):
+                return False
+            self.session.commit()
+            return True
+        except ValueError:
+            return False
 
     def get_roles(self, id: int) -> list[Roles]:
         roles = Roles.query.join(UserRoles).filter(UserRoles.user_id == id).all()

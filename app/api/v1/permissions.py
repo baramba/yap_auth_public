@@ -1,29 +1,22 @@
 from flask import abort, request
-from flask_restx import Namespace, Resource, fields
+from flask_restx import Resource
 from marshmallow import ValidationError
 
+from app.api.v1.dto import PermissionsDto as PDto
 from app.models.permissions import PermissionsSchema
 from app.services.permissions import get_permissions_service
 
-ns = Namespace("permissions", "permissions API")
+ns = PDto.ns
 
 permission_schema = PermissionsSchema()
 permissions_schema = PermissionsSchema(many=True)
 
 api_service = get_permissions_service()
 
-permission_response = ns.model(
-    "Permissions",
-    {
-        "id": fields.Integer(readonly=True, description="Permission id number"),
-        "name": fields.String(required=True, description="Permission name"),
-    },
-)
-
 
 @ns.route("/<int:id>")
 class PermissionsAPI(Resource):
-    @ns.marshal_with(permission_response)
+    @ns.marshal_with(PDto.permission_response)
     def get(self, id: int):
         permission = api_service.get(id)
         if not permission:
@@ -48,7 +41,7 @@ class PermissionsAPI(Resource):
 
 @ns.route("/")
 class PermissionsAPI1(Resource):
-    @ns.expect(permission_response)
+    @ns.expect(PDto.permission_response)
     def post(self):
         try:
             permission_schema.load(request.json)

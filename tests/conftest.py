@@ -46,7 +46,7 @@ def testdata() -> Testdata:
 
 @pytest.fixture()
 def user_create(client, testdata: Testdata) -> User:
-    user = testdata.gen_user()
+    user = testdata.create_user()
     response = client.post(
         "api/v1/users/",
         json=user.dict(exclude={"id"}),

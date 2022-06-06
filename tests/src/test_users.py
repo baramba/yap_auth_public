@@ -1,10 +1,9 @@
-from random import choice
 
 from utils.testdata import Testdata
 
 
 def test_user_create(client, testdata: Testdata):
-    user = testdata.gen_user()
+    user = testdata.create_user()
     response = client.post(
         "api/v1/users/",
         json=user.dict(exclude={"id"}),
@@ -15,14 +14,15 @@ def test_user_create(client, testdata: Testdata):
     return user
 
 
-def test_user_delete(client, user_create):
-    user = user_create
+def test_user_delete(client, testdata: Testdata):
+    user = testdata.create_user()
     response = client.delete("api/v1/users/{0}".format(user.id))
     assert response.status_code == 204
 
 
-def test_user_update(client, user=test_user_create):
-    user = choice(testdata.users)
+def test_user_update(client, testdata: Testdata):
+    user = testdata.create_user()
+    user_updated = testdata.create_user() 
     response = client.put(
         "api/v1/users/{0}".format(user.id),
         json=user.dict(exclude={"id"}),

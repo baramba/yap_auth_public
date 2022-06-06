@@ -2,7 +2,7 @@ import os
 from datetime import timedelta
 
 from dotenv import load_dotenv
-from pydantic import AnyUrl, BaseSettings, DirectoryPath, Field, RedisDsn
+from pydantic import AnyUrl, BaseSettings, Field, RedisDsn
 
 load_dotenv()
 
@@ -10,7 +10,8 @@ load_dotenv()
 class Settings(BaseSettings):
 
     SQLALCHEMY_DATABASE_URI: AnyUrl = Field(
-        default="postgresql://user:pass@localhost/postgres", env="SQLALCHEMY_DB_URI")
+        default="postgresql://user:pass@localhost:5432/postgres", env="SQLALCHEMY_DB_URI"
+    )
     RESTX_MASK_SWAGGER: bool = Field(default=False, env="RESTX_MASK_SWAGGER")
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = Field(default=True, env="SQLALCHEMY_TRACK_MODIFICATIONS")
 

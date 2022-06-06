@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask_restx import Api
 
-from app.auth.controller import api as auth
+from app.api.v1.auth import ns as auth
 
 from .permissions import ns as permissions
 from .roles import ns as roles

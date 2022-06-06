@@ -11,7 +11,7 @@ Faker.seed(0)
 
 
 class Testdata:
-    def gen_user(self, number: int = 100) -> User:
+    def create_user(self, number: int = 100) -> User:
 
         return User(
             first_name=fake.first_name(),

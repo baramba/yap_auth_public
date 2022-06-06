@@ -1,12 +1,13 @@
 from flask import abort, request
-from flask_restx import Namespace, Resource, fields
+from flask_restx import Resource
 from marshmallow import ValidationError
 
+from app.api.v1.dto import RolesDto
 from app.models.roles import RoleSchema
 from app.models.roles_permissions import RolesPermissionsSchema
 from app.services.roles import get_roles_service
 
-ns = Namespace("roles", "roles API")
+ns = RolesDto.ns
 
 
 role_schema = RoleSchema()
@@ -16,24 +17,10 @@ role_permissions_schema = RolesPermissionsSchema(many=True)
 
 api_service = get_roles_service()
 
-role_response = ns.model(
-    "Roles",
-    {
-        "id": fields.Integer(readonly=True, description="Role id number"),
-        "name": fields.String(required=True, description="Role name"),
-    },
-)
-role_permissions_req = ns.model(
-    "Role_permissions",
-    {
-        "ids": fields.List(fields.Integer(required=True, description="Permission id"), required=True),
-    },
-)
-
 
 @ns.route("/<int:id>")
 class RolesAPI(Resource):
-    @ns.marshal_with(role_response)
+    @ns.marshal_with(RolesDto.role_response)
     def get(self, id: int):
         role = api_service.get(id)
         if not role:
@@ -58,7 +45,7 @@ class RolesAPI(Resource):
 
 @ns.route("/")
 class RoleAPI1(Resource):
-    @ns.expect(role_response)
+    @ns.expect(RolesDto.role_response)
     def post(
         self,
     ):
@@ -72,12 +59,12 @@ class RoleAPI1(Resource):
 
 @ns.route("/<int:id>/permissions")
 class RolePermissionsAPI(Resource):
-    @ns.expect(role_permissions_req)
+    @ns.expect(RolesDto.role_permissions_req)
     def post(self, id: int):
         api_service.add_permissions(id, dict(request.json)["ids"])
         return "Add permissions to role.id={0}.".format(id), 200
 
-    @ns.expect(role_permissions_req)
+    @ns.expect(RolesDto.role_permissions_req)
     def delete(self, id: int):
         result = api_service.delete_permissions(id, dict(request.json)["ids"])
         return ("Role id={0} deleted {1} permissions".format(id, result), 200)

@@ -1,9 +1,7 @@
 from flask import Flask
-from redis import Redis
 
-from app import bcrypt, jwt, ma, redis
+from app import bcrypt, jwt, ma
 from app.api.v1.ns import blueprint as api_v1
-from app.auth import auth_bp
 from app.config.settings import settings
 from app.db import init_db
 

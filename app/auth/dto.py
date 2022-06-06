@@ -2,7 +2,7 @@ from flask_restx import Namespace, fields
 
 
 class AuthDto:
-    api = Namespace("user", description="Authenticate and receive tokens.")
+    api = Namespace("auth", description="Authenticate and receive tokens.")
 
     auth_register = api.model(
         "Registration data",

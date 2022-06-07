@@ -11,21 +11,25 @@ class PermissionsService:
         self.db = db
         self.session = db.session
 
+    @user_has(permissions=["permissions"])
     def get(self, id: int) -> Optional[Permissions]:
         return Permissions.query.get_or_404(id)
 
+    @user_has(permissions=["permissions"])
     def delete(self, id: int) -> Optional[bool]:
         permission = Permissions.query.get_or_404(id)
         self.session.delete(permission)
         self.session.commit()
         return True
 
+    @user_has(permissions=["permissions"])
     def create(self, payload) -> int:
         permission = Permissions(**payload)
         self.session.add(permission)
         self.session.commit()
         return permission.id
 
+    @user_has(permissions=["permissions"])
     def update(self, id, payload) -> Optional[bool]:
         try:
             if not Permissions.query.filter_by(id=id).update(payload):

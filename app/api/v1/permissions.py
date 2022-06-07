@@ -1,4 +1,5 @@
 from flask import abort, request
+from flask_jwt_extended.view_decorators import jwt_required
 from flask_restx import Resource
 from marshmallow import ValidationError
 
@@ -16,6 +17,7 @@ api_service = get_permissions_service()
 
 @ns.route("/<int:id>")
 class PermissionsAPI(Resource):
+    @jwt_required()
     @ns.marshal_with(PDto.permission_response)
     def get(self, id: int):
         permission = api_service.get(id)
@@ -23,12 +25,14 @@ class PermissionsAPI(Resource):
             abort(404)
         return permission_schema.dump(permission)
 
+    @jwt_required()
     def delete(self, id: int):
         result = api_service.delete(id=id)
         if result:
             return "Permission id={0} deleted".format(id), 200
         return abort(404)
 
+    @jwt_required()
     def put(self, id):
         try:
             permission_schema.load(request.json)
@@ -41,6 +45,7 @@ class PermissionsAPI(Resource):
 
 @ns.route("/")
 class PermissionsAPI1(Resource):
+    @jwt_required()
     @ns.expect(PDto.permission_response)
     def post(self):
         try:

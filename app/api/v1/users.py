@@ -1,6 +1,7 @@
 import logging
 
 from flask import abort, request
+from flask_jwt_extended.view_decorators import jwt_required
 from flask_restx import Resource
 from marshmallow import ValidationError
 
@@ -26,6 +27,7 @@ api_service = get_users_service()
 
 @ns.route("/<int:id>")
 class UsersAPI(Resource):
+    @jwt_required()
     @ns.marshal_with(UserDto.user_response)
     def get(
         self,
@@ -36,12 +38,15 @@ class UsersAPI(Resource):
             abort(404)
         return user_schema_resp.dump(user)
 
+    @jwt_required()
     def delete(self, id: int):
         result = api_service.delete(id=id)
         if result:
             return ok20x(http_code=204)
         return abort(404)
 
+    @ns.deprecated
+    @jwt_required()
     def put(self, id):
         try:
             user_schema.load(request.json)
@@ -54,6 +59,7 @@ class UsersAPI(Resource):
 
 @ns.route("/")
 class UsersAPIOther(Resource):
+    @jwt_required()
     @ns.expect(UserDto.user_request)
     def post(self):
         try:
@@ -66,6 +72,7 @@ class UsersAPIOther(Resource):
 
 @ns.route("/<int:id>/roles/")
 class UsersRolesAPI(Resource):
+    @jwt_required()
     @ns.marshal_list_with(UserDto.role_response)
     def get(self, id: int):
         roles = api_service.get_roles(id)
@@ -73,6 +80,7 @@ class UsersRolesAPI(Resource):
             abort(404)
         return roles_schema.dump(roles)
 
+    @jwt_required()
     @ns.expect(UserDto.user_roles_req)
     def delete(self, id: int):
         result = api_service.delete_roles(id=id, roles_id=dict(request.json)["ids"])
@@ -80,6 +88,7 @@ class UsersRolesAPI(Resource):
             return ok20x(http_code=204)
         return abort(404)
 
+    @jwt_required()
     @ns.expect(UserDto.user_roles_req)
     def post(self, id: int):
 

@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: bytes = Field(default=os.urandom(24), env="JWT_SECRET_KEY")
     JWT_ACCESS_TOKEN_EXPIRES = Field(default=timedelta(minutes=15), env="JWT_ACCESS_TOKEN_EXPIRES")
     JWT_REFRESH_TOKEN_EXPIRES = Field(default=timedelta(days=30), env="JWT_REFRESH_TOKEN_EXPIRES")
+    JWT_HEADER_TYPE = Field(default="", env="JWT_HEADER_TYPE")
 
     redis_dsn: RedisDsn = Field(default="redis://@localhost:6379/0", env="REDIS_URL")
 

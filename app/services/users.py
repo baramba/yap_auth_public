@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 from typing import Optional
 
-from flask_jwt_extended import (
+from flask_jwt_extended.utils import (
     create_access_token,
     create_refresh_token,
     get_jwt_identity,
@@ -19,6 +19,7 @@ from app.models.roles import Roles
 from app.models.schemas import UserHistory as UserHistorySchema
 from app.models.users import Users
 from app.models.users_roles import UserRoles
+from app.services.auth_decorators import user_has
 from app.services.base import BaseStorage
 from app.services.redis import get_redis_storage
 from app.services.utils import err_resp, get_password_hash, internal_err_resp, message
@@ -103,6 +104,7 @@ class UsersService:
             logger.error(e)
             return internal_err_resp()
 
+    @user_has(permissions=["user"])
     def refresh(self):
         identity = get_jwt_identity()
 
@@ -116,11 +118,13 @@ class UsersService:
 
         return resp, 200
 
+    @user_has(permissions=["user"])
     def logout(self, jti, ttype):
         self.storage.put_to_storage(jti, "", settings.JWT_ACCESS_TOKEN_EXPIRES)
         resp = message(True, f"{ttype.capitalize()} token successfully revoked.")
         return resp, 200
 
+    @user_has(permissions=["user"])
     def update(self, payload) -> Optional[bool]:
         identity = get_jwt_identity()
         if "password" in payload.keys():
@@ -143,6 +147,7 @@ class UsersService:
             logger.error(e)
             return internal_err_resp()
 
+    @user_has(permissions=["user"])
     def get_history(self):
         identity = get_jwt_identity()
         try:
@@ -159,21 +164,25 @@ class UsersService:
             logger.error(e)
             return internal_err_resp()
 
+    @user_has(permissions=["admin", "user"])
     def get(self, id: int) -> Optional[Users]:
         return Users.query.get_or_404(id)
 
+    @user_has(permissions=["admin"])
     def delete(self, id: int) -> Optional[bool]:
         user = Users.query.get_or_404(id)
         self.session.delete(user)
         self.session.commit()
         return True
 
+    @user_has(permissions=["admin"])
     def create(self, payload) -> int:
         user = Users(**payload)
         self.session.add(user)
         self.session.commit()
         return user
 
+    @user_has(permissions=["admin"])
     def update_user(self, id, payload) -> Optional[bool]:
         try:
             if not Users.query.filter_by(id=id).update(payload):
@@ -183,15 +192,18 @@ class UsersService:
         except ValueError:
             return False
 
+    @user_has(permissions=["admin"])
     def get_roles(self, id: int) -> list[Roles]:
         roles = Roles.query.join(UserRoles).filter(UserRoles.user_id == id).all()
         return roles
 
+    @user_has(permissions=["admin"])
     def delete_roles(self, id: int, roles_id: list[int]) -> int:
         result = UserRoles.query.filter((UserRoles.user_id == id) & (UserRoles.role_id.in_(roles_id))).delete()
         db.session.commit()
         return result
 
+    @user_has(permissions=["admin"])
     def add_roles(self, id: int, roles_id: list[int]) -> bool:
 
         user_roles = [UserRoles(user_id=id, role_id=role_id) for role_id in roles_id]

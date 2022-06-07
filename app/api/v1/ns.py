@@ -9,12 +9,23 @@ from .users import ns as users
 
 blueprint = Blueprint("Auth_v1", __name__, url_prefix="/api/v1")
 
+
+authorizations = {
+    "api_key": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+    }
+}
+
 api = Api(
     blueprint,
     title="Auth API",
     version="1.0",
     description="Auth API's description",
-    validate=True
+    validate=True,
+    authorizations=authorizations,
+    security="api_key",
     # All API metadatas
 )
 

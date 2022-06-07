@@ -11,7 +11,7 @@ blueprint = Blueprint("Auth_v1", __name__, url_prefix="/api/v1")
 
 
 authorizations = {
-    "api_key": {
+    "Bearer": {
         "type": "apiKey",
         "in": "header",
         "name": "Authorization",
@@ -25,7 +25,7 @@ api = Api(
     description="Auth API's description",
     validate=True,
     authorizations=authorizations,
-    security="api_key",
+    security="Bearer",
     # All API metadatas
 )
 

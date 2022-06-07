@@ -11,9 +11,8 @@ from flask_sqlalchemy import SQLAlchemy
 from loguru import logger
 from sqlalchemy.exc import IntegrityError
 
-from app import jwt
+from app import db, jwt
 from app.config.settings import settings
-from app.db import db
 from app.models.history import UsersHistory
 from app.models.roles import Roles
 from app.models.schemas import UserHistory as UserHistorySchema

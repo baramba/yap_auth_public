@@ -5,7 +5,7 @@ from typing import Optional
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
 
-from app.db import db
+from app import db
 from app.models.roles import Roles
 from app.models.roles_permissions import RolesPermissions
 from app.services.auth_decorators import user_has

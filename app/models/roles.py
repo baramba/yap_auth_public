@@ -1,6 +1,6 @@
 from enum import unique
 
-from app.db import db
+from app import db
 
 from .base import BaseSchema
 

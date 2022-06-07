@@ -1,6 +1,6 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
-from app.db import db
+from app import db
 
 
 class BaseSchema(SQLAlchemyAutoSchema):

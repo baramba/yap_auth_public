@@ -1,7 +1,6 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema, SQLAlchemySchema, auto_field
 
-from app import bcrypt
-from app.db import db
+from app import bcrypt, db
 from app.services.utils import get_password_hash
 
 from .base import BaseSchema

@@ -11,10 +11,11 @@ blueprint = Blueprint("Auth_v1", __name__, url_prefix="/api/v1")
 
 
 authorizations = {
-    "Bearer": {
+    "apikey": {
         "type": "apiKey",
         "in": "header",
         "name": "Authorization",
+        'description': "Type in the *'Value'* input box below: **'Bearer &lt;JWT&gt;'**, where JWT is the token"
     }
 }
 
@@ -25,7 +26,7 @@ api = Api(
     description="Auth API's description",
     validate=True,
     authorizations=authorizations,
-    security="Bearer",
+    security="apikey",
     # All API metadatas
 )
 

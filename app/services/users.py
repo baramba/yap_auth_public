@@ -52,6 +52,11 @@ class UsersService:
             self.session.add(user)
             self.session.commit()
 
+            # All registered users from API have default role - user
+            user_role = UserRoles(user_id=user.id, role_id=Roles.query.filter_by(name=settings.default_role).first().id)
+            self.session.add(user_role)
+            self.session.commit()
+
             history_item = UsersHistory(user_id=user.id, user_agent=agent)
             self.session.add(history_item)
             self.session.commit()
@@ -130,7 +135,6 @@ class UsersService:
             payload["password_hash"] = get_password_hash(payload["password"])
             del payload["password"]
         if "email" in payload.keys():
-            # if Users.query.filter_by(email=payload['email']).first() is not None:
             if Users.query.filter((Users.email == payload["email"]) & (Users.id != identity)).first() is not None:
                 return err_resp("Email is already being used.", "email_taken", 403)
 

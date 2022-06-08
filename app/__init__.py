@@ -7,6 +7,7 @@ from redis import Redis
 
 from app.config.settings import settings
 
+
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 jwt = JWTManager()
@@ -23,8 +24,10 @@ def create_app():
 
     # Refister blueprint
     from app.api.v1.ns import blueprint as api_v1
+    from app.services.cli import cli_users_bp
 
     app.register_blueprint(api_v1)
+    app.register_blueprint(cli_users_bp)
 
     return app
 

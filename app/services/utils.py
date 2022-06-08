@@ -5,12 +5,12 @@ def get_password_hash(password):
     return bcrypt.generate_password_hash(password).decode("utf-8")
 
 
-def message(status, message):
+def message(status, message) -> dict:
     response_object = {"status": status, "message": message}
     return response_object
 
 
-def validation_error(status, errors):
+def validation_error(status, errors) -> dict:
     response_object = {"status": status, "errors": errors}
 
     return response_object

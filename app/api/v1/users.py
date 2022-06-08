@@ -59,6 +59,7 @@ class UsersAPI(Resource):
 
 @ns.route("/")
 class UsersAPIOther(Resource):
+    @ns.deprecated
     @jwt_required()
     @ns.expect(UserDto.user_request)
     def post(self):

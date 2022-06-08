@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from flask_jwt_extended.utils import (
     create_access_token,

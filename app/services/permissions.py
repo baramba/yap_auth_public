@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 from app.db import db
 from app.models.permissions import Permissions
+from app.services.auth_decorators import user_has
 
 
 class PermissionsService:

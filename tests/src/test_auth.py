@@ -1,7 +1,5 @@
 from http import HTTPStatus
-from traceback import print_tb
 
-from tests.utils.service import del_user
 from tests.utils.testdata import Testdata
 
 
@@ -32,10 +30,9 @@ def test_refresh(client, user_create):
     refresh_token = user_create["refresh_token"]
     response = client.post(
         "api/v1/auth/refresh",
-        json=user.dict(include={"email", "password"}),
         headers={
             "content-type": "application/json",
-            "Authorization": "Bearer " + refresh_token
+            "Authorization": "Bearer {}".format(refresh_token)
         }
     )
     assert response.status_code == HTTPStatus.OK
@@ -48,7 +45,7 @@ def test_refresh(client, user_create):
         "api/v1/auth/logout",
         headers={
             "content-type": "application/json",
-            "Authorization": "Bearer " + access_token
+            "Authorization": "Bearer {}".format(access_token)
         }
     )
     assert response.status_code == HTTPStatus.OK
@@ -63,7 +60,7 @@ def test_change(client, user_create, testdata):
         json=new_user_data.dict(exclude={"id"}),
         headers={
             "content-type": "application/json",
-            "Authorization": "Bearer " + access_token
+            "Authorization": "Bearer {}".format(access_token)
         }
     )
     assert response.status_code == HTTPStatus.OK
@@ -76,7 +73,7 @@ def test_history(client, user_create):
         "api/v1/auth/history",
         headers={
             "content-type": "application/json",
-            "Authorization": "Bearer " + access_token
+            "Authorization": "Bearer {}".format(access_token)
         }
     )
     assert response.status_code == HTTPStatus.OK

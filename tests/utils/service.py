@@ -1,6 +1,14 @@
+import email
+import os
 from typing import Union
 
+import psycopg2
+from dotenv import load_dotenv
 from pydantic import BaseModel
+
+from tests.utils.structures import User
+
+load_dotenv()
 
 
 def validate(
@@ -16,3 +24,34 @@ def validate(
             return model.parse_obj(data)
         if isinstance(data, bytes):
             return model.parse_raw(data)
+
+
+def get_db_connection():
+    conn = psycopg2.connect(
+        host=os.environ.get('POSTGRES_HOST'),
+        database=os.environ.get('POSTGRES_DB'),
+        user=os.environ.get('POSTGRES_USER'),
+        password=os.environ.get('POSTGRES_PASSWORD')
+    )
+    return conn
+
+
+def del_user(user: User):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    print('Before del:')
+    cur.execute('''SELECT * FROM users;''')
+    res = cur.fetchall()
+    for item in res:
+        print(item)
+    sql = '''
+        DELETE FROM users WHERE email = '{email}';
+    '''
+    cur.execute(sql.format(email=user.email))
+    print('After del:')
+    cur.execute('''SELECT * FROM users;''')
+    res = cur.fetchall()
+    for item in res:
+        print(item)
+    cur.close()
+    conn.close()

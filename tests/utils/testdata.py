@@ -1,6 +1,7 @@
 from faker import Faker
 from faker.providers import internet, misc, person
-from utils.structures import Permission, Role, User
+
+from tests.utils.structures import Permission, Role, User
 
 fake = Faker(locale="ru_RU")
 fake.add_provider(person)

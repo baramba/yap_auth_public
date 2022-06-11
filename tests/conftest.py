@@ -1,15 +1,15 @@
 import asyncio
 
 import pytest
-from utils.structures import User
-from utils.testdata import Testdata
+from flask_migrate import upgrade as flask_migrate_upgrade
 
-from app.app import create_app
+from app import create_app, db
+from tests.utils.structures import User
+from tests.utils.testdata import Testdata
 
-
-@pytest.fixture(scope="session")
-def event_loop():
-    return asyncio.get_event_loop()
+# @pytest.fixture(scope="session")
+# def event_loop():
+#     return asyncio.get_event_loop()
 
 
 @pytest.fixture(scope="session")
@@ -18,14 +18,10 @@ def app():
     app.config.update(
         {
             "TESTING": True,
+            'DEBUG': True,
         }
     )
-
-    # other setup can go here
-
     yield app
-
-    # clean up / reset resources here
 
 
 @pytest.fixture(scope="session")
@@ -35,6 +31,7 @@ def client(app):
 
 @pytest.fixture()
 def runner(app):
+    print("fixture runner")
     return app.test_cli_runner()
 
 
@@ -46,10 +43,14 @@ def testdata() -> Testdata:
 
 @pytest.fixture()
 def user_create(client, testdata: Testdata) -> User:
+    res = {}
     user = testdata.create_user()
     response = client.post(
-        "api/v1/users/",
+        "api/v1/auth/registration",
         json=user.dict(exclude={"id"}),
         headers={"content-type": "application/json"},
     )
-    return User.parse_raw(response.json)
+    res['user'] = user
+    res['access_token'] = response.json['access_token']
+    res['refresh_token'] = response.json['refresh_token']
+    return res

@@ -151,10 +151,11 @@ class UsersService:
             return internal_err_resp()
 
     @user_has(permissions=["user"])
-    def get_history(self):
+    def get_history(self, page):
         identity = get_jwt_identity()
         try:
-            history_data = UsersHistory.query.filter_by(user_id=identity).all()
+            history_data = UsersHistory.query.filter_by(user_id=identity).paginate(
+                page, settings.ROWS_PER_PAGE, False).items
             result = []
             for item in history_data:
                 histoty_schema = UserHistorySchema()

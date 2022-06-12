@@ -21,9 +21,9 @@ authorizations = {
 
 api = Api(
     blueprint,
-    title="Auth API",
+    title="API для аутентификации и API управления ролями",
     version="1.0",
-    description="Auth API's description",
+    description="",
     validate=True,
     authorizations=authorizations,
     security="apikey",

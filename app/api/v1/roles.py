@@ -23,6 +23,7 @@ role_service: RolesService = get_roles_service()
 @ns.route("/<int:id>")
 class RolesAPI(Resource):
     @ns.marshal_with(RolesDto.role_response)
+    @ns.doc(description="Получение данных роли по id")
     @jwt_required()
     def get(self, id: int):
         role = role_service.get(id)
@@ -30,6 +31,9 @@ class RolesAPI(Resource):
             abort(404)
         return role_schema.dump(role)
 
+    @ns.doc(description="Удаление роли по id")
+    @ns.response(204, "Role has been deleted.")
+    @ns.response(404, "ID not found.")
     @jwt_required()
     def delete(self, id: int):
         result = role_service.delete(id=id)
@@ -37,6 +41,9 @@ class RolesAPI(Resource):
             return "Role id={0} deleted".format(id), 204
         return abort(404)
 
+    @ns.doc(description="Изменение роли по id")
+    @ns.response(204, "Role has been updated.")
+    @ns.response(404, "ID not found.")
     @jwt_required()
     def put(self, id):
         try:
@@ -50,6 +57,8 @@ class RolesAPI(Resource):
 
 @ns.route("/")
 class RoleAPI1(Resource):
+    @ns.doc(description="Добавление роли")
+    @ns.response(201, "Role has been created.")
     @jwt_required()
     @ns.expect(RolesDto.role_response)
     def post(
@@ -65,6 +74,8 @@ class RoleAPI1(Resource):
 
 @ns.route("/<int:id>/permissions")
 class RolePermissionsAPI(Resource):
+    @ns.doc(description="Добавление прав для роли")
+    @ns.response(200, "Permissions has been added to role.")
     @jwt_required()
     @ns.expect(RolesDto.role_permissions_req)
     def post(self, id: int):
@@ -72,6 +83,8 @@ class RolePermissionsAPI(Resource):
         return "Add permissions to role.id={0}.".format(id), 200
 
     @jwt_required()
+    @ns.doc(description="Удаление прав у роли")
+    @ns.response(200, "Permissions has been deleted from role.")
     @ns.expect(RolesDto.role_permissions_req)
     def delete(self, id: int):
         result = role_service.delete_permissions(id, dict(request.json)["ids"])

@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     JWT_REFRESH_TOKEN_EXPIRES = Field(default=timedelta(days=30), env="JWT_REFRESH_TOKEN_EXPIRES")
     # JWT_HEADER_TYPE = Field(default="", env="JWT_HEADER_TYPE")
 
+    ROWS_PER_PAGE = Field(default=10, env="ROWS_PER_PAGE")
+
     redis_dsn: RedisDsn = Field(default="redis://@localhost:6379/0", env="REDIS_URL")
 
     default_role = Field(default="user", env="DAFAULT_ROLE")

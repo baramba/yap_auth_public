@@ -65,7 +65,8 @@ class AuthChange(Resource):
 
 
 @ns.route("/history")
+@ns.route("/history/<int:page>")
 class AuthHistory(Resource):
     @jwt_required()
-    def get(self):
-        return users_service.get_history()
+    def get(self, page=1):
+        return users_service.get_history(page)

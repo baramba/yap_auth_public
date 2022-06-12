@@ -33,8 +33,4 @@ def test_user_update(client, testdata: Testdata):
 
 def test_user_get(client, user_create):
     response = client.get("api/v1/users/13")
-    print(response.data)
     assert response.status_code == 200
-
-
-b'{\n    "errors": {\n        "": "\'{\\"first_name\\": \\"\\\\\\\\u041c\\\\\\\\u043e\\\\\\\\u043a\\\\\\\\u0435\\\\\\\\u0439\\", \\"last_name\\": \\"\\\\\\\\u042f\\\\\\\\u043a\\\\\\\\u043e\\\\\\\\u0432\\\\\\\\u043b\\\\\\\\u0435\\\\\\\\u0432\\\\\\\\u0430\\", \\"password\\": \\"@T6YM4OsOw\\", \\"email\\": \\"jakovlevvladilen@rambler.ru\\"}\' is not of type \'object\'"\n    },\n    "message": "Input payload validation failed"\n}\n'

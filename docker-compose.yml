@@ -27,3 +27,13 @@ services:
       - postgres
       - redis
     entrypoint: /code/entrypoint.sh
+  nginx:
+    container_name: nginx
+    image: nginx:1.21.6
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    ports:
+      - 80:80
+    depends_on:
+      - auth

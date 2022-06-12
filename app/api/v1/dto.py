@@ -2,7 +2,7 @@ from flask_restx import Namespace, fields
 
 
 class AuthDto:
-    ns = Namespace("auth", description="Authenticate and receive tokens.")
+    ns = Namespace("auth", description="Регистрация, аутентификация и получение токенов.")
 
     auth_register = ns.model(
         "Registration data",
@@ -34,7 +34,7 @@ class AuthDto:
 
 
 class UserDto:
-    ns = Namespace("users", "Users API")
+    ns = Namespace("users", "API управления пользователями для администраторов.")
     user_response = ns.model(
         "User",
         {
@@ -72,7 +72,7 @@ class UserDto:
 
 
 class RolesDto:
-    ns = Namespace("roles", "roles API")
+    ns = Namespace("roles", "API управления ролями для администраторов.")
     role_response = ns.model(
         "Roles",
         {
@@ -89,7 +89,7 @@ class RolesDto:
 
 
 class PermissionsDto:
-    ns = Namespace("permissions", "permissions API")
+    ns = Namespace("permissions", "API управления правами пользователей для администраторов.")
 
     permission_response = ns.model(
         "Permissions",

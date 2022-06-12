@@ -28,6 +28,7 @@ api_service = get_users_service()
 @ns.route("/<int:id>")
 class UsersAPI(Resource):
     @jwt_required()
+    @ns.doc(description="Получение данных пользователя по id")
     @ns.marshal_with(UserDto.user_response)
     def get(
         self,
@@ -39,6 +40,9 @@ class UsersAPI(Resource):
         return user_schema_resp.dump(user)
 
     @jwt_required()
+    @ns.doc(description="Удаление пользователя по id.")
+    @ns.response(204, 'User has been deleted.')
+    @ns.response(404, 'ID not found.')
     def delete(self, id: int):
         result = api_service.delete(id=id)
         if result:
@@ -74,6 +78,7 @@ class UsersAPIOther(Resource):
 @ns.route("/<int:id>/roles/")
 class UsersRolesAPI(Resource):
     @jwt_required()
+    @ns.doc(description="Получение данных о ролях пользователя по id.")
     @ns.marshal_list_with(UserDto.role_response)
     def get(self, id: int):
         roles = api_service.get_roles(id)
@@ -83,6 +88,9 @@ class UsersRolesAPI(Resource):
 
     @jwt_required()
     @ns.expect(UserDto.user_roles_req)
+    @ns.doc(description="Удаление ролей пользователя.")
+    @ns.response(204, 'Roles has been deleted.')
+    @ns.response(404, 'ID not found.')
     def delete(self, id: int):
         result = api_service.delete_roles(id=id, roles_id=dict(request.json)["ids"])
         if result:
@@ -91,8 +99,10 @@ class UsersRolesAPI(Resource):
 
     @jwt_required()
     @ns.expect(UserDto.user_roles_req)
+    @ns.doc(description="Изменение ролей пользователя.")
+    @ns.response(201, 'Roles has been updated.')
+    @ns.response(404, 'ID not found.')
     def post(self, id: int):
-
         result = api_service.add_roles(id=id, roles_id=dict(request.json)["ids"])
         if result:
             return ok20x(http_code=201)

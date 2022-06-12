@@ -66,7 +66,7 @@ backlog = 128
 #
 
 workers = 4
-worker_class = "uvicorn.workers.UvicornWorker"
+worker_class = "gevent"
 worker_connections = 1000
 timeout = 30
 keepalive = 2
@@ -203,7 +203,7 @@ def when_ready(server):
 def worker_int(worker):
     worker.log.info("worker received INT or QUIT signal")
 
-    ## get traceback info
+    # get traceback info
     import sys
     import threading
     import traceback

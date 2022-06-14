@@ -1,0 +1,755 @@
+{
+  "basePath": "/api/v1",
+  "consumes": [
+    "application/json"
+  ],
+  "definitions": {
+    "Login data": {
+      "properties": {
+        "email": {
+          "description": "User email",
+          "type": "string"
+        },
+        "password": {
+          "description": "User password",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "password"
+      ],
+      "type": "object"
+    },
+    "Permissions": {
+      "properties": {
+        "id": {
+          "description": "Permission id number",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "name": {
+          "description": "Permission name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "Registration data": {
+      "properties": {
+        "email": {
+          "description": "User email",
+          "type": "string"
+        },
+        "first_name": {
+          "description": "User first name",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "User password",
+          "type": "string"
+        },
+        "password": {
+          "description": "User password",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "password"
+      ],
+      "type": "object"
+    },
+    "Role": {
+      "properties": {
+        "id": {
+          "description": "Role id number",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "name": {
+          "description": "Role name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "Role_permissions": {
+      "properties": {
+        "ids": {
+          "items": {
+            "description": "Permission id",
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "type": "object"
+    },
+    "Roles": {
+      "properties": {
+        "id": {
+          "description": "Role id number",
+          "readOnly": true,
+          "type": "integer"
+        },
+        "name": {
+          "description": "Role name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "User": {
+      "properties": {
+        "email": {
+          "description": "User email",
+          "type": "string"
+        },
+        "first_name": {
+          "description": "User first name",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "User last name",
+          "type": "string"
+        },
+        "password_hash": {
+          "description": "User password",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "first_name",
+        "last_name",
+        "password_hash"
+      ],
+      "type": "object"
+    },
+    "User data": {
+      "properties": {
+        "email": {
+          "description": "User email",
+          "type": "string"
+        },
+        "first_name": {
+          "description": "User first name",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "User password",
+          "type": "string"
+        },
+        "password": {
+          "description": "User password",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "User_roles": {
+      "properties": {
+        "ids": {
+          "items": {
+            "description": "Role id",
+            "type": "integer"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "type": "object"
+    }
+  },
+  "host": "localhost",
+  "info": {
+    "title": "API для аутентификации и API управления ролями",
+    "version": "1.0"
+  },
+  "paths": {
+    "/auth/change": {
+      "post": {
+        "description": "Изменение данных пользователя.",
+        "operationId": "post_auth_change_/auth/change",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User%20data"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated user info."
+          },
+          "422": {
+            "description": "Signature verification failed."
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/history": {
+      "get": {
+        "description": "История входов в аккаунт.",
+        "operationId": "get_auth_history_/auth/history",
+        "responses": {
+          "200": {
+            "description": "Successfully get user auth history."
+          },
+          "422": {
+            "description": "Signature verification failed."
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/history/{page}": {
+      "get": {
+        "description": "История входов в аккаунт.",
+        "operationId": "get_auth_history_/auth/history/<int:page>",
+        "responses": {
+          "200": {
+            "description": "Successfully get user auth history."
+          },
+          "422": {
+            "description": "Signature verification failed."
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "page",
+          "required": true,
+          "type": "integer"
+        }
+      ]
+    },
+    "/auth/login": {
+      "post": {
+        "description": "Получение токенов для зарегистрированных пользователей",
+        "operationId": "post_auth_login_/auth/login",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Login%20data"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully logged in."
+          },
+          "401": {
+            "description": "Incorrect password."
+          },
+          "404": {
+            "description": "The email you have entered does not match any account."
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "delete": {
+        "description": "Добавление токена в Blacklist",
+        "operationId": "delete_auth_logout_/auth/logout",
+        "responses": {
+          "200": {
+            "description": "Token successfully revoked."
+          },
+          "422": {
+            "description": "Signature verification failed."
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "description": "Обновление токенов",
+        "operationId": "post_refresh_token_/auth/refresh",
+        "responses": {
+          "200": {
+            "description": "Successfully refresh tokens."
+          },
+          "422": {
+            "description": "Only refresh tokens are allowed"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/registration": {
+      "post": {
+        "description": "Регистрация новых пользователей",
+        "operationId": "post_auth_register_/auth/registration",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Registration%20data"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User has been registered"
+          },
+          "403": {
+            "description": "Email is already being used"
+          }
+        },
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/permissions/": {
+      "post": {
+        "description": "Добавление права",
+        "operationId": "post_permissions_api1",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Permissions"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Permission has been created."
+          }
+        },
+        "tags": [
+          "permissions"
+        ]
+      }
+    },
+    "/permissions/{id}": {
+      "delete": {
+        "description": "Удаление права по id",
+        "operationId": "delete_permissions_api",
+        "responses": {
+          "200": {
+            "description": "Permission has been deleted."
+          },
+          "404": {
+            "description": "ID not found."
+          }
+        },
+        "tags": [
+          "permissions"
+        ]
+      },
+      "get": {
+        "description": "Получение права по id",
+        "operationId": "get_permissions_api",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Permissions"
+            }
+          }
+        },
+        "tags": [
+          "permissions"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "put": {
+        "description": "Изменение права по id",
+        "operationId": "put_permissions_api",
+        "responses": {
+          "204": {
+            "description": "Permission has been updated."
+          },
+          "404": {
+            "description": "ID not found."
+          }
+        },
+        "tags": [
+          "permissions"
+        ]
+      }
+    },
+    "/roles/": {
+      "post": {
+        "description": "Добавление роли",
+        "operationId": "post_role_api1",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Roles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Role has been created."
+          }
+        },
+        "tags": [
+          "roles"
+        ]
+      }
+    },
+    "/roles/{id}": {
+      "delete": {
+        "description": "Удаление роли по id",
+        "operationId": "delete_roles_api",
+        "responses": {
+          "204": {
+            "description": "Role has been deleted."
+          },
+          "404": {
+            "description": "ID not found."
+          }
+        },
+        "tags": [
+          "roles"
+        ]
+      },
+      "get": {
+        "description": "Получение данных роли по id",
+        "operationId": "get_roles_api",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Roles"
+            }
+          }
+        },
+        "tags": [
+          "roles"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "put": {
+        "description": "Изменение роли по id",
+        "operationId": "put_roles_api",
+        "responses": {
+          "204": {
+            "description": "Role has been updated."
+          },
+          "404": {
+            "description": "ID not found."
+          }
+        },
+        "tags": [
+          "roles"
+        ]
+      }
+    },
+    "/roles/{id}/permissions": {
+      "delete": {
+        "description": "Удаление прав у роли",
+        "operationId": "delete_role_permissions_api",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Role_permissions"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Permissions has been deleted from role."
+          }
+        },
+        "tags": [
+          "roles"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "post": {
+        "description": "Добавление прав для роли",
+        "operationId": "post_role_permissions_api",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Role_permissions"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Permissions has been added to role."
+          }
+        },
+        "tags": [
+          "roles"
+        ]
+      }
+    },
+    "/users/": {
+      "post": {
+        "deprecated": true,
+        "operationId": "post_users_api_other",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "delete": {
+        "description": "Удаление пользователя по id.",
+        "operationId": "delete_users_api",
+        "responses": {
+          "204": {
+            "description": "User has been deleted."
+          },
+          "404": {
+            "description": "ID not found."
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      },
+      "get": {
+        "description": "Получение данных пользователя по id",
+        "operationId": "get_users_api",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "put": {
+        "deprecated": true,
+        "operationId": "put_users_api",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{id}/roles/": {
+      "delete": {
+        "description": "Удаление ролей пользователя.",
+        "operationId": "delete_users_roles_api",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User_roles"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Roles has been deleted."
+          },
+          "404": {
+            "description": "ID not found."
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      },
+      "get": {
+        "description": "Получение данных о ролях пользователя по id.",
+        "operationId": "get_users_roles_api",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/Role"
+              },
+              "type": "array"
+            }
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      },
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "type": "integer"
+        }
+      ],
+      "post": {
+        "description": "Изменение ролей пользователя.",
+        "operationId": "post_users_roles_api",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User_roles"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Roles has been updated."
+          },
+          "404": {
+            "description": "ID not found."
+          }
+        },
+        "tags": [
+          "users"
+        ]
+      }
+    }
+  },
+  "produces": [
+    "application/json"
+  ],
+  "responses": {
+    "MaskError": {
+      "description": "When any error occurs on mask"
+    },
+    "ParseError": {
+      "description": "When a mask can't be parsed"
+    }
+  },
+  "security": [
+    {
+      "apikey": []
+    }
+  ],
+  "securityDefinitions": {
+    "apikey": {
+      "description": "Type in the *'Value'* input box below: **'Bearer &lt;JWT&gt;'**, where JWT is the token",
+      "in": "header",
+      "name": "Authorization",
+      "type": "apiKey"
+    }
+  },
+  "swagger": "2.0",
+  "tags": [
+    {
+      "description": "API управления пользователями для администраторов.",
+      "name": "users"
+    },
+    {
+      "description": "API управления ролями для администраторов.",
+      "name": "roles"
+    },
+    {
+      "description": "API управления правами пользователей для администраторов.",
+      "name": "permissions"
+    },
+    {
+      "description": "Регистрация, аутентификация и получение токенов.",
+      "name": "auth"
+    }
+  ]
+}

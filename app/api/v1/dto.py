@@ -98,3 +98,7 @@ class PermissionsDto:
             "name": fields.String(required=True, description="Permission name"),
         },
     )
+
+
+class SocialDto:
+    ns = Namespace("social", "Вход через социальные сервисы")

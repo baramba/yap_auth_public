@@ -9,6 +9,8 @@ load_dotenv()
 
 class Settings(BaseSettings):
 
+    SECRET_KEY = "secret_key"
+
     SQLALCHEMY_DATABASE_URI: AnyUrl = Field(
         default="postgresql://user:pass@localhost:5432/postgres", env="SQLALCHEMY_DB_URI"
     )
@@ -32,6 +34,14 @@ class Settings(BaseSettings):
 
     JAEGER_PORT: int = Field(default="6831", env="JAEGER_PORT")
     JAEGER_HOST: str = Field(default="localhost", env="JAEGER_HOST")
+
+    # OAuth vk settings
+    vk_client_id: str = Field(env='VK_APP_ID')
+    vk_client_secret: str = Field(env='VK_APP_SECRET')
+
+    # OAuth yandex settings
+    yandex_client_id: str = Field(env='YANDEX_APP_ID')
+    yandex_client_secret: str = Field(env='YANDEX_APP_SECRET')
 
 
 settings = Settings()

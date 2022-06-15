@@ -1,8 +1,16 @@
+import random
+import string
+
 from app import bcrypt
 
 
 def get_password_hash(password):
     return bcrypt.generate_password_hash(password).decode("utf-8")
+
+
+def get_random_string(length):
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(length))
 
 
 def message(status, message) -> dict:

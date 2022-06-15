@@ -23,8 +23,8 @@ redis = Redis.from_url(settings.redis_dsn)
 def configure_tracer(app: Flask) -> None:
 
     jaeger_exporter = JaegerExporter(
-        agent_host_name="localhost",
-        agent_port=6831,
+        agent_host_name=settings.JAEGER_HOST,
+        agent_port=settings.JAEGER_PORT,
     )
 
     provider = TracerProvider()

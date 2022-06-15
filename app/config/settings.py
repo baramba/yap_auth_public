@@ -30,5 +30,8 @@ class Settings(BaseSettings):
     # to switch on telemetry delete ".+" from OTEL_PYTHON_FLASK_EXCLUDED_URLS
     OTEL_PYTHON_FLASK_EXCLUDED_URLS: str = Field(default="swagger, .+", env="OTEL_PYTHON_FLASK_EXCLUDED_URLS")
 
+    JAEGER_PORT: int = Field(default="6831", env="JAEGER_PORT")
+    JAEGER_HOST: str = Field(default="localhost", env="JAEGER_HOST")
+
 
 settings = Settings()

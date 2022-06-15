@@ -16,15 +16,19 @@ class Settings(BaseSettings):
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = Field(default=True, env="SQLALCHEMY_TRACK_MODIFICATIONS")
 
     JWT_SECRET_KEY: bytes = Field(default=os.urandom(24), env="JWT_SECRET_KEY")
-    JWT_ACCESS_TOKEN_EXPIRES = Field(default=timedelta(minutes=15), env="JWT_ACCESS_TOKEN_EXPIRES")
-    JWT_REFRESH_TOKEN_EXPIRES = Field(default=timedelta(days=30), env="JWT_REFRESH_TOKEN_EXPIRES")
-    # JWT_HEADER_TYPE = Field(default="", env="JWT_HEADER_TYPE")
+    JWT_ACCESS_TOKEN_EXPIRES: timedelta = Field(default=timedelta(minutes=15), env="JWT_ACCESS_TOKEN_EXPIRES")
+    JWT_REFRESH_TOKEN_EXPIRES: timedelta = Field(default=timedelta(days=30), env="JWT_REFRESH_TOKEN_EXPIRES")
 
-    ROWS_PER_PAGE = Field(default=10, env="ROWS_PER_PAGE")
+    ROWS_PER_PAGE: int = Field(default=10, env="ROWS_PER_PAGE")
 
     redis_dsn: RedisDsn = Field(default="redis://@localhost:6379/0", env="REDIS_URL")
 
-    default_role = Field(default="user", env="DAFAULT_ROLE")
+    default_role: str = Field(default="user", env="DAFAULT_ROLE")
+
+    OTEL_RESOURCE_ATTRIBUTES: str = Field(default="service.name=auth", env="OTEL_RESOURCE_ATTRIBUTES")
+
+    # to switch on telemetry delete ".+" from OTEL_PYTHON_FLASK_EXCLUDED_URLS
+    OTEL_PYTHON_FLASK_EXCLUDED_URLS: str = Field(default="swagger, .+", env="OTEL_PYTHON_FLASK_EXCLUDED_URLS")
 
 
 settings = Settings()

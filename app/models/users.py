@@ -14,6 +14,7 @@ class Users(db.Model):
     last_name = db.Column(db.String(150), nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     email = db.Column(db.String(254), nullable=False, unique=True)
+    token = db.Column(db.String(256), nullable=True)
 
     @property
     def password(self):

@@ -9,6 +9,8 @@ load_dotenv()
 
 class Settings(BaseSettings):
 
+    SECRET_KEY = "secret_key"
+
     SQLALCHEMY_DATABASE_URI: AnyUrl = Field(
         default="postgresql://user:pass@localhost:5432/postgres", env="SQLALCHEMY_DB_URI"
     )
@@ -25,6 +27,10 @@ class Settings(BaseSettings):
     redis_dsn: RedisDsn = Field(default="redis://@localhost:6379/0", env="REDIS_URL")
 
     default_role = Field(default="user", env="DAFAULT_ROLE")
+
+    # OAuth vk settings
+    client_id: str = Field(env='VK_APP_ID')
+    client_secret: str = Field(env='VK_APP_SECRET')
 
 
 settings = Settings()

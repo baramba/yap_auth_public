@@ -21,7 +21,13 @@ from app.models.users_roles import UserRoles
 from app.services.auth_decorators import user_has
 from app.services.base import BaseStorage
 from app.services.redis import get_redis_storage
-from app.services.utils import err_resp, get_password_hash, internal_err_resp, message
+from app.services.utils import (
+    err_resp,
+    get_password_hash,
+    get_random_string,
+    internal_err_resp,
+    message,
+)
 
 log = logging.getLogger("{0}[{1}]".format(Path(__file__).parent.name, Path(__file__).name))
 
@@ -107,6 +113,37 @@ class UsersService:
         except Exception as e:
             logger.error(e)
             return internal_err_resp()
+
+    def login_vk(self, payload, agent):
+        email = payload['email']
+        if user := Users.query.filter_by(email=email).first():
+            Users.query.filter_by(email=email).update(payload)
+            self.session.commit()
+        else:
+            logger.info('New user')
+            payload['password'] = get_random_string(12)
+            user = Users(**payload)
+            self.session.add(user)
+            self.session.commit()
+
+            # All registered users from API have default role - user
+            user_role = UserRoles(user_id=user.id, role_id=Roles.query.filter_by(name=settings.default_role).first().id)
+            self.session.add(user_role)
+            self.session.commit()
+
+        history_item = UsersHistory(user_id=user.id, user_agent=agent)
+        self.session.add(history_item)
+        self.session.commit()
+
+        access_token = create_access_token(identity=user.id)
+        refresh_token = create_refresh_token(identity=user.id)
+
+        resp = message(True, "User has logged by vk.")
+        resp["access_token"] = access_token
+        resp["refresh_token"] = refresh_token
+        resp["user"] = user.id
+
+        return resp, 200
 
     @user_has(permissions=["user"])
     def refresh(self):

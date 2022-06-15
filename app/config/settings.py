@@ -29,8 +29,12 @@ class Settings(BaseSettings):
     default_role = Field(default="user", env="DAFAULT_ROLE")
 
     # OAuth vk settings
-    client_id: str = Field(env='VK_APP_ID')
-    client_secret: str = Field(env='VK_APP_SECRET')
+    vk_client_id: str = Field(env='VK_APP_ID')
+    vk_client_secret: str = Field(env='VK_APP_SECRET')
+
+    # OAuth yandex settings
+    yandex_client_id: str = Field(env='YANDEX_APP_ID')
+    yandex_client_secret: str = Field(env='YANDEX_APP_SECRET')
 
 
 settings = Settings()

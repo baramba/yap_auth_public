@@ -16,7 +16,7 @@ authorizations = {
         "type": "apiKey",
         "in": "header",
         "name": "Authorization",
-        'description': "Type in the *'Value'* input box below: **'Bearer &lt;JWT&gt;'**, where JWT is the token"
+        "description": "Type in the *'Value'* input box below: **'Bearer &lt;JWT&gt;'**, where JWT is the token",
     }
 }
 
@@ -30,6 +30,7 @@ api = Api(
     security="apikey",
     # All API metadatas
 )
+
 
 api.add_namespace(users)
 api.add_namespace(roles)

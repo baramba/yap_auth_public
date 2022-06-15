@@ -78,3 +78,16 @@ services:
     depends_on:
       - auth
 ```
+## Подключение к Jaeger
+- Запустить Jaeger
+```
+docker run -d -p6831:6831/udp -p16686:16686 jaegertracing/all-in-one:latest
+```
+* В файле .env указазать следующие переменные окружения:
+```
+OTEL_RESOURCE_ATTRIBUTES="service.name=auth"
+OTEL_PYTHON_FLASK_EXCLUDED_URLS="swagger"
+JAEGER_PORT=6831
+JAEGER_HOST=localhost
+```
+- Для отключения сбора телементрии в переменной OTEL_PYTHON_FLASK_EXCLUDED_URLS указать значние ".+"

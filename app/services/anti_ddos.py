@@ -5,17 +5,6 @@ from redis import Redis
 
 from app import redis
 
-
-def check() -> bool:
-    return True
-
-
-def rate_limit():
-    if check():
-        return True
-    return abort(429)
-
-
 class RateLimitService:
     def __init__(self, redis: Redis, bucket_size=100, time_period=59) -> None:
         self.redis = redis

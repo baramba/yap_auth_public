@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: bytes = Field(default=os.urandom(24), env="JWT_SECRET_KEY")
     JWT_ACCESS_TOKEN_EXPIRES: timedelta = Field(default=timedelta(minutes=15), env="JWT_ACCESS_TOKEN_EXPIRES")
     JWT_REFRESH_TOKEN_EXPIRES: timedelta = Field(default=timedelta(days=30), env="JWT_REFRESH_TOKEN_EXPIRES")
+    # JWT_HEADER_TYPE = Field(default="", env="JWT_HEADER_TYPE")
 
     ROWS_PER_PAGE: int = Field(default=10, env="ROWS_PER_PAGE")
 
@@ -28,7 +29,6 @@ class Settings(BaseSettings):
     default_role: str = Field(default="user", env="DAFAULT_ROLE")
 
     OTEL_RESOURCE_ATTRIBUTES: str = Field(default="service.name=auth", env="OTEL_RESOURCE_ATTRIBUTES")
-
     # to switch on telemetry delete ".+" from OTEL_PYTHON_FLASK_EXCLUDED_URLS
     OTEL_PYTHON_FLASK_EXCLUDED_URLS: str = Field(default="swagger, .+", env="OTEL_PYTHON_FLASK_EXCLUDED_URLS")
 
@@ -36,12 +36,12 @@ class Settings(BaseSettings):
     JAEGER_HOST: str = Field(default="localhost", env="JAEGER_HOST")
 
     # OAuth vk settings
-    vk_client_id: str = Field(env='VK_APP_ID')
-    vk_client_secret: str = Field(env='VK_APP_SECRET')
+    vk_client_id: str = Field(default=None, env="VK_APP_ID")
+    vk_client_secret: str = Field(default=None, env="VK_APP_SECRET")
 
     # OAuth yandex settings
-    yandex_client_id: str = Field(env='YANDEX_APP_ID')
-    yandex_client_secret: str = Field(env='YANDEX_APP_SECRET')
+    yandex_client_id: str = Field(default=None, env="YANDEX_APP_ID")
+    yandex_client_secret: str = Field(default=None, env="YANDEX_APP_SECRET")
 
 
 settings = Settings()

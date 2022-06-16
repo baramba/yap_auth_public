@@ -1,4 +1,5 @@
 import logging
+from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
@@ -66,5 +67,6 @@ class RolesService:
         return result
 
 
+@lru_cache()
 def get_roles_service() -> RolesService:
     return RolesService(db)

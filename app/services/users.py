@@ -1,4 +1,5 @@
 import logging
+from functools import lru_cache
 from pathlib import Path
 from typing import Optional
 
@@ -115,13 +116,13 @@ class UsersService:
             return internal_err_resp()
 
     def login_vk(self, payload, agent):
-        email = payload['email']
+        email = payload["email"]
         if user := Users.query.filter_by(email=email).first():
             Users.query.filter_by(email=email).update(payload)
             self.session.commit()
         else:
-            logger.info('New user')
-            payload['password'] = get_random_string(12)
+            logger.info("New user")
+            payload["password"] = get_random_string(12)
             user = Users(**payload)
             self.session.add(user)
             self.session.commit()
@@ -191,8 +192,9 @@ class UsersService:
     def get_history(self, page):
         identity = get_jwt_identity()
         try:
-            history_data = UsersHistory.query.filter_by(user_id=identity).paginate(
-                page, settings.ROWS_PER_PAGE, False).items
+            history_data = (
+                UsersHistory.query.filter_by(user_id=identity).paginate(page, settings.ROWS_PER_PAGE, False).items
+            )
             result = []
             for item in history_data:
                 histoty_schema = UserHistorySchema()
@@ -257,5 +259,6 @@ class UsersService:
         return True
 
 
+@lru_cache()
 def get_users_service() -> UsersService:
     return UsersService(db, get_redis_storage())

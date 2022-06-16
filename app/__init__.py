@@ -75,36 +75,36 @@ def register_extensions(app):
 
 def configure_extensions():
     oauth.register(
-        name='vk',
+        name="vk",
         client_id=settings.vk_client_id,
         client_secret=settings.vk_client_secret,
-        access_token_url='https://oauth.vk.com/access_token',
+        access_token_url="https://oauth.vk.com/access_token",
         access_token_params=None,
-        authorize_url='https://oauth.vk.com/authorize',
+        authorize_url="https://oauth.vk.com/authorize",
         authorize_params=None,
-        api_base_url='https://api.vk.com/method/',
+        api_base_url="https://api.vk.com/method/",
         client_kwargs={
-            'display': 'page',
-            'scope': 'email offline',
-            'response_type': 'code',
-            'state': 'test',
-            'token_endpoint_auth_method': 'client_secret_post'
-        }
+            "display": "page",
+            "scope": "email offline",
+            "response_type": "code",
+            "state": "test",
+            "token_endpoint_auth_method": "client_secret_post",
+        },
     )
     oauth.register(
-        name='yandex',
+        name="yandex",
         client_id=settings.yandex_client_id,
         client_secret=settings.yandex_client_secret,
-        access_token_url='https://oauth.yandex.ru/token',
+        access_token_url="https://oauth.yandex.ru/token",
         access_token_params=None,
-        authorize_url='https://oauth.yandex.ru/authorize',
+        authorize_url="https://oauth.yandex.ru/authorize",
         authorize_params=None,
-        api_base_url='https://login.yandex.ru/',
+        api_base_url="https://login.yandex.ru/",
         client_kwargs={
             # 'scope': 'email offline',
-            'response_type': 'code',
-            'state': 'test',
-        }
+            "response_type": "code",
+            "state": "test",
+        },
     )
 
 

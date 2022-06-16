@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Optional
 
 from flask_sqlalchemy import SQLAlchemy
@@ -41,5 +42,6 @@ class PermissionsService:
             return False
 
 
+@lru_cache()
 def get_permissions_service() -> PermissionsService:
     return PermissionsService(db)
